@@ -5,7 +5,9 @@ body {
     animation: fadeIn 2s ease-in;
     background: black;
 }
-
+body {
+  background: white;
+}
 h2{
   border-left: 5px solid red ;
 }
@@ -51,12 +53,12 @@ nav a:hover {
 }
 
 section {
-    margin: 0 0 0 0;
+    margin: 10px;
     border-radius: 5px;
     border: 1px solid red;
-    padding:15px;
+    padding: 5px;
     animation: fadeInUp 1.5s ease-in;
-    background: dimgray;
+    background: transparent;
     box-shadow: 1px 1px 1px 1px #363850;
 }
 
