@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
     animation: fadeIn 2s ease-in;
+<<<<<<< HEAD
     background-image: url('./img/bg.jpg');
     background-size: 1 1;
 }
@@ -23,12 +24,22 @@ input{
  margin-left: 5px;
  width: 150px;
  height: 20px;
+=======
+    background: black;
+}
+body {
+  background: white;
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
 }
 h2{
   border-left: 5px solid red ;
 }
 
 header {
+<<<<<<< HEAD
+=======
+    background:url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbiRs9CCdqESRSKBwhclvnzT3Hq60fr9vOKQ&usqp=CAU) ; /* Orange */
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
     color: white;
     background-size: cover;
     text-align: center;
@@ -40,6 +51,7 @@ header {
 
 header h1, header p{
   background: transparent;
+<<<<<<< HEAD
   color: white;
 }
 
@@ -48,6 +60,17 @@ nav {
     animation: slideIn 1s ease-out;
     display: flex;
     background: red;
+=======
+  color: black;
+}
+
+nav {
+    background-color: #FF0000; /* Red */
+    overflow: hidden;
+    animation: slideIn 1s ease-out;
+    display: flex;
+    
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
 }
 
 nav a {
@@ -60,9 +83,15 @@ nav a {
     transition: background-color 0.3s, transform 0.3s;
 }
 
+<<<<<<< HEAD
 nav a:hover, a:active, .active {
     background-color: #ddd;
     color: white;
+=======
+nav a:hover {
+    background-color: #ddd;
+    color: black;
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
     transform: scale(1.1);
 }
 
@@ -90,6 +119,7 @@ footer {
 footer p {
   border: hidden;
 }
+<<<<<<< HEAD
 .project{
   border-top: 2px solid red;
 }
@@ -102,6 +132,8 @@ footer p {
   animation: blink 4s infinite;
   animation-delay: 10s;
 }
+=======
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
 
 /* Animations */
 @keyframes fadeIn {
@@ -118,6 +150,7 @@ footer p {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+<<<<<<< HEAD
 @keyframes blink{
   0%{
     opacity: 100;
@@ -129,6 +162,9 @@ footer p {
     opacity: 100;
   }
 }
+=======
+
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
     nav a {
@@ -154,4 +190,8 @@ footer p {
     footer {
         position: static;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> a1e0de5894fb3183a1c8668104f09c20633010a8
