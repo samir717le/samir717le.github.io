@@ -1,0 +1,76 @@
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+@keyframes slideright {
+ from { transform: translateY(200%); }
+ to { transform: translateY(0); }
+}
+@keyframes identifier {
+ from {  }
+ to {  }
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes blink{
+  0%{
+    opacity: 100;
+  }
+  50%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 100;
+  }
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+    
+    white-space: nowrap;
+  }
+  0%{
+   white-space: nowrap;
+  }
+  100% {
+   white-space: none;
+  }
+}
+    
+@keyframes blink {
+  50% {
+    border-color: transparent
+  }
+}
+
+@keyframes spin {
+ 0% {
+  transform: rotate(0deg);
+ }
+
+ 100% {
+  transform: rotate(360deg);
+ }
+}
+@keyframes bg3d{
+ 0%{
+  transform: rotateX(0deg);
+  transform: rotateY(5deg);
+  transform: rotateZ(10deg)
+ }
+ 100%{
+  transform: rotateX(360deg);
+  transform: rotateY(360deg);
+  transform: rotateZ(360deg)
+ }
+}
