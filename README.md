@@ -7,7 +7,7 @@
 ---
 
 <p align="center">
-  <img src="https://github.com/Samir717le/Samir717le/blob/main/banner.png" alt="Profile Banner" width="100%"/>
+  <img src="https://github.com/Samir717le/Samir717le/blob/main/unnamed.png" alt="Profile Banner" width="100%"/>
 </p>
 
 ---
