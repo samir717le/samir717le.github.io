@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Car Game</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: Arial, sans-serif;
+        }
+        canvas { 
+            display: block; 
+        }
+        #instructions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            user-select: none;
+        }
+        #birthday-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4em;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
+            text-align: center;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        #confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            display: none;
+        }
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            z-index: 10;
+        }
+        #up-btn, #down-btn, #left-btn, #right-btn {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+            position: absolute;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #up-btn {
+            top: -70px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #down-btn {
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #left-btn {
+            top: 0;
+            left: -70px;
+        }
+        #right-btn {
+            top: 0;
+            left: 70px;
+        }
+        #up-btn:active, #down-btn:active, #left-btn:active, #right-btn:active {
+            background-color: rgba(200, 200, 200, 0.9);
+            transform: translateX(-50%) scale(0.95);
+        }
+        #left-btn:active, #right-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+    <div id="instructions">
+        Controls:<br>
+        W - Move Forward<br>
+        S - Move Backward<br>
+        A - Turn Left<br>
+        D - Turn Right
+    </div>
+    <div id="mobile-controls">
+        <div id="up-btn">▲</div>
+        <div id="down-btn">▼</div>
+        <div id="left-btn">◄</div>
+        <div id="right-btn">►</div>
+    </div>
+    <div id="birthday-message">HAPPY BIRTHDAY!<br>🎉🎂🎁</div>
+    <div id="confetti"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Initialize Three.js scene
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // Sky blue background
+        
+        // Create camera
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 10);
+        
+        // Create renderer
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+        
+        // Create lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(5, 10, 7.5);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 1024;
+        directionalLight.shadow.mapSize.height = 1024;
+        scene.add(directionalLight);
+        
+        // Create ground plane
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x7cfc00,
+            roughness: 0.8
+        });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
+        
+        // Create finish zone
+        const finishGeometry = new THREE.CircleGeometry(5, 32);
+        const finishMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0xff69b4,
+            roughness: 0.7
+        });
+        const finishZone = new THREE.Mesh(finishGeometry, finishMaterial);
+        finishZone.rotation.x = -Math.PI / 2;
+        finishZone.position.set(40, 0.01, 40);
+        scene.add(finishZone);
+        
+        // Create a simple car
+        const carGroup = new THREE.Group();
+        scene.add(carGroup);
+        
+        // Car body
+        const carBodyGeometry = new THREE.BoxGeometry(2, 0.5, 4);
+        const carBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+        const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
+        carBody.position.y = 0.5;
+        carBody.castShadow = true;
+        carGroup.add(carBody);
+        
+        // Car cabin
+        const carCabinGeometry = new THREE.BoxGeometry(1.5, 0.6, 2);
+        const carCabinMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+        const carCabin = new THREE.Mesh(carCabinGeometry, carCabinMaterial);
+        carCabin.position.y = 1.1;
+        carCabin.position.z = -0.5;
+        carCabin.castShadow = true;
+        carGroup.add(carCabin);
+        
+        // Wheels
+        const wheelGeometry = new THREE.CylinderGeometry(0.4, 0.4, 0.3, 16);
+        const wheelMaterial = new THREE.MeshStandardMaterial({ color: 0x333333 });
+        
+        const wheelFL = new THREE.Mesh(wheelGeometry, wheelMaterial);
+        wheelFL.rotation.z = Math.PI / 2;
+        wheelFL.position.set(-1.1, 0.4, 1.2);
+        carGroup.add(wheelFL);
+        
+        const wheelFR = new THREE.Mesh(wheelGeometry, wheelMaterial);
+        wheelFR.rotation.z = Math.PI / 2;
+        wheelFR.position.set(1.1, 0.4, 1.2);
+        carGroup.add(wheelFR);
+        
+        const wheelBL = new THREE.Mesh(wheelGeometry, wheelMaterial);
+        wheelBL.rotation.z = Math.PI / 2;
+        wheelBL.position.set(-1.1, 0.4, -1.2);
+        carGroup.add(wheelBL);
+        
+        const wheelBR = new THREE.Mesh(wheelGeometry, wheelMaterial);
+        wheelBR.rotation.z = Math.PI / 2;
+        wheelBR.position.set(1.1, 0.4, -1.2);
+        carGroup.add(wheelBR);
+        
+        // Initial car position
+        carGroup.position.set(0, 0, 0);
+        carGroup.rotation.y = Math.PI / 4; // Initial direction
+        
+        // Create arrows to guide the way
+        const arrowPoints = [
+            { x: 5, z: 5 },
+            { x: 10, z: 10 },
+            { x: 15, z: 15 },
+            { x: 20, z: 20 },
+            { x: 25, z: 25 },
+            { x: 30, z: 30 },
+            { x: 35, z: 35 },
+        ];
+        
+        const arrowGeometry = new THREE.ConeGeometry(0.5, 1.5, 16);
+        const arrowMaterial = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+        
+        const arrows = [];
+        arrowPoints.forEach((point, index) => {
+            const arrow = new THREE.Mesh(arrowGeometry, arrowMaterial);
+            arrow.position.set(point.x, 1, point.z);
+            
+            // Calculate rotation to point to the next arrow
+            if (index < arrowPoints.length - 1) {
+                const nextPoint = arrowPoints[index + 1];
+                const direction = new THREE.Vector2(
+                    nextPoint.x - point.x,
+                    nextPoint.z - point.z
+                ).normalize();
+                arrow.rotation.y = Math.atan2(direction.x, direction.y);
+            } else {
+                // Last arrow points to finish zone
+                const direction = new THREE.Vector2(
+                    finishZone.position.x - point.x,
+                    finishZone.position.z - point.z
+                ).normalize();
+                arrow.rotation.y = Math.atan2(direction.x, direction.y);
+            }
+            
+            arrow.rotation.x = -Math.PI / 2; // Orient the arrow upwards
+            arrow.castShadow = true;
+            scene.add(arrow);
+            arrows.push(arrow);
+        });
+        
+        // Camera follows car
+        camera.position.set(
+            carGroup.position.x, 
+            carGroup.position.y + 5, 
+            carGroup.position.z + 10
+        );
+        camera.lookAt(carGroup.position);
+        
+        // Game state
+        const keys = {};
+        let gameOver = false;
+        
+        // Add key event listeners
+        window.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+        
+        // Detect if device is mobile
+        function isMobileDevice() {
+            return (typeof window.orientation !== "undefined") || (navigator.userAgent.indexOf('IEMobile') !== -1);
+        }
+        
+        // Set up mobile controls
+        function setupMobileControls() {
+            const mobileControls = document.getElementById('mobile-controls');
+            
+            if (isMobileDevice()) {
+                mobileControls.style.display = 'block';
+                document.getElementById('instructions').innerHTML = 'Use the on-screen controls to drive';
+                
+                // Setup touch events for mobile controller
+                const upBtn = document.getElementById('up-btn');
+                const downBtn = document.getElementById('down-btn');
+                const leftBtn = document.getElementById('left-btn');
+                const rightBtn = document.getElementById('right-btn');
+                
+                // Touch start events
+                upBtn.addEventListener('touchstart', () => { keys['w'] = true; });
+                downBtn.addEventListener('touchstart', () => { keys['s'] = true; });
+                leftBtn.addEventListener('touchstart', () => { keys['a'] = true; });
+                rightBtn.addEventListener('touchstart', () => { keys['d'] = true; });
+                
+                // Mouse down events (for testing on desktop)
+                upBtn.addEventListener('mousedown', () => { keys['w'] = true; });
+                downBtn.addEventListener('mousedown', () => { keys['s'] = true; });
+                leftBtn.addEventListener('mousedown', () => { keys['a'] = true; });
+                rightBtn.addEventListener('mousedown', () => { keys['d'] = true; });
+                
+                // Touch end events
+                upBtn.addEventListener('touchend', () => { keys['w'] = false; });
+                downBtn.addEventListener('touchend', () => { keys['s'] = false; });
+                leftBtn.addEventListener('touchend', () => { keys['a'] = false; });
+                rightBtn.addEventListener('touchend', () => { keys['d'] = false; });
+                
+                // Mouse up events (for testing on desktop)
+                upBtn.addEventListener('mouseup', () => { keys['w'] = false; });
+                downBtn.addEventListener('mouseup', () => { keys['s'] = false; });
+                leftBtn.addEventListener('mouseup', () => { keys['a'] = false; });
+                rightBtn.addEventListener('mouseup', () => { keys['d'] = false; });
+                
+                // Touch leave events (in case finger slides off the button)
+                upBtn.addEventListener('touchleave', () => { keys['w'] = false; });
+                downBtn.addEventListener('touchleave', () => { keys['s'] = false; });
+                leftBtn.addEventListener('touchleave', () => { keys['a'] = false; });
+                rightBtn.addEventListener('touchleave', () => { keys['d'] = false; });
+                
+                // Mouse leave events
+                upBtn.addEventListener('mouseleave', () => { keys['w'] = false; });
+                downBtn.addEventListener('mouseleave', () => { keys['s'] = false; });
+                leftBtn.addEventListener('mouseleave', () => { keys['a'] = false; });
+                rightBtn.addEventListener('mouseleave', () => { keys['d'] = false; });
+            }
+        }
+        
+        // Call setup function
+        setupMobileControls();
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // Confetti effect for birthday celebration
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confetti');
+            confettiContainer.style.display = 'block';
+            
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.background = getRandomColor();
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = -Math.random() * 100 + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                // Animation
+                confetti.animate(
+                    [
+                        { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
+                        { transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 1000}deg)`, opacity: 0 }
+                    ],
+                    {
+                        duration: Math.random() * 3000 + 2000,
+                        delay: Math.random() * 2000
+                    }
+                );
+                
+                confettiContainer.appendChild(confetti);
+                
+                // Remove after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, 5000);
+            }
+        }
+        
+        function getRandomColor() {
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8800', '#8800ff'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Show birthday celebration
+        function showBirthdayCelebration() {
+            if (gameOver) return;
+            
+            gameOver = true;
+            document.getElementById('birthday-message').style.display = 'block';
+            createConfetti();
+            
+            // Make camera face the player from a different angle
+            const celebrationCamera = () => {
+                const radius = 15;
+                const angle = Date.now() * 0.001;
+                
+                camera.position.x = carGroup.position.x + radius * Math.cos(angle);
+                camera.position.z = carGroup.position.z + radius * Math.sin(angle);
+                camera.position.y = carGroup.position.y + 5;
+                camera.lookAt(carGroup.position);
+                
+                requestAnimationFrame(celebrationCamera);
+            };
+            
+            celebrationCamera();
+        }
+        
+        // Check if car has reached the finish zone
+        function checkFinish() {
+            const distance = carGroup.position.distanceTo(finishZone.position);
+            if (distance < 5) {
+                showBirthdayCelebration();
+            }
+        }
+        
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const speed = 0.15;
+            const rotationSpeed = 0.03;
+            
+            if (!gameOver) {
+                // Handle car controls
+                if (keys['w']) {
+                    carGroup.position.x += Math.sin(carGroup.rotation.y) * speed;
+                    carGroup.position.z += Math.cos(carGroup.rotation.y) * speed;
+                }
+                if (keys['s']) {
+                    carGroup.position.x -= Math.sin(carGroup.rotation.y) * speed;
+                    carGroup.position.z -= Math.cos(carGroup.rotation.y) * speed;
+                }
+                if (keys['a']) {
+                    carGroup.rotation.y += rotationSpeed;
+                }
+                if (keys['d']) {
+                    carGroup.rotation.y -= rotationSpeed;
+                }
+                
+                // Update camera to follow car
+                camera.position.x = carGroup.position.x - 10 * Math.sin(carGroup.rotation.y);
+                camera.position.z = carGroup.position.z - 10 * Math.cos(carGroup.rotation.y);
+                camera.position.y = carGroup.position.y + 5;
+                camera.lookAt(carGroup.position);
+                
+                // Check if car has reached the finish zone
+                checkFinish();
+            }
+            
+            // Animate arrows (gentle floating motion)
+            arrows.forEach((arrow, index) => {
+                arrow.position.y = 1 + Math.sin(Date.now() * 0.002 + index) * 0.2;
+                arrow.rotation.z = Math.sin(Date.now() * 0.001 + index) * 0.1;
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+    </script>
+</body>
+</html>
