@@ -276,7 +276,8 @@
         this.vy = Math.sin(this.directionAngle) * this.speed;
         
         // Random color from cyberpunk palette
-        this.color = "#000000";
+        const colors = ['#ff0066', '#00ffff', '#9900ff', '#ffff00', '#00ff66'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
         this.fullColor = `hsla(${this.color}, ${this.alpha})`;
       }
 
