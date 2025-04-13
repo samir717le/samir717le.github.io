@@ -1,133 +1,369 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <link rel="stylesheet" href="/css/bootstrap@5.2.0.min.css">
- <link rel="stylesheet" href="/css/chartist.min.css">
- <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Samir 717 LE</title>
+  <script src="https://unpkg.com/feather-icons"></script>
+ 
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #000;
+      overflow: hidden;
+      height: 100%;
+      font-family: 'Montserrat', sans-serif;
+      color: white;
+    }
 
- <meta name="og:title" content="SamiR 717 LE">
- <meta name="og:description"
-  content="Web developer with expertise in HTML, CSS, JavaScript, and backend technologies like Node.js and PHP. Passionate about building dynamic web apps and exploring server management and automation.">
- <meta name="og:image" content="">
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
 
- <title>SAMIR 717 LE</title>
+    .s-logo {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(180deg);
+      width: 300px;
+      height: 300px;
+      z-index: 2;
+    }
+
+    .bar {
+      position: absolute;
+      width: 300px;
+      height: 30px;
+      border-radius: 15px;
+      transform: rotate(-45deg); 
+      filter: blur(4px);
+      box-shadow: 0 0 25px currentColor, 0 0 50px currentColor;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    .bar:nth-child(1) {
+      top: 0;
+      left: 0;
+      background: purple;
+      color: purple;
+      animation-delay: 0s;
+    }
+
+    .bar:nth-child(2) {
+      top: 130px;
+      left: 0;
+      background: blue;
+      color: blue;
+      animation-delay: 0.3s;
+    }
+
+    .bar:nth-child(3) {
+      top: 260px;
+      left: 0;
+      background: red;
+      color: red;
+      animation-delay: 0.6s;
+    }
+
+    .content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    h1 {
+      font-size: 4rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 10px #fff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+      animation: titlePulse 3s infinite alternate;
+    }
+
+    p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0.5rem auto;
+      line-height: 1.6;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .skill {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(5px);
+      animation: skillGlow 4s infinite;
+      animation-delay: calc(var(--i) * 0.2s);
+    }
+
+    .social-links {
+      margin-top: 30px;
+      display: flex;
+      gap: 20px;
+    }
+
+    .social-link {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+    a {
+      color: red;
+      text-decoration: none;
+    }
+
+    .social-link:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #00ffff;
+    }
+
+    @keyframes glow {
+      0% {
+        transform: rotate(-45deg) scale(1);
+        opacity: 0.9;
+      }
+      100% {
+        transform: rotate(-45deg) scale(1.05);
+        opacity: 1;
+      }
+    }
+
+    @keyframes titlePulse {
+      0% {
+        text-shadow: 0 0 10px #fff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+      }
+      100% {
+        text-shadow: 0 0 15px #fff, 0 0 30px #00ffff, 0 0 40px #00ffff, 0 0 50px #00ffff;
+      }
+    }
+
+    @keyframes skillGlow {
+      0%, 100% {
+        box-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff;
+      }
+      50% {
+        box-shadow: 0 0 10px #ff0066, 0 0 20px #ff0066;
+      }
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+      
+      .s-logo {
+        width: 200px;
+        height: 200px;
+      }
+      
+      .bar {
+        width: 200px;
+        height: 20px;
+      }
+      
+      .bar:nth-child(2) {
+        top: 90px;
+      }
+      
+      .bar:nth-child(3) {
+        top: 180px;
+      }
+    }
+  </style>
 </head>
-
 <body>
- <div id="loading" class="loading">
-  <div class="loader"></div>
- </div>
+  <canvas id="bg"></canvas>
 
+  <div class="s-logo">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
 
-
- <header class="head">
-  <nav class="navbar bg-dark text-white static">
-   <div class="navbar-brand">
-    <img src="img/20240804_120937.jpg" width="80px" id="brand">
-   </div>
-   <ul class="navbar-nav navbar-text text-white">
-    <li><a class="nav-link text-white" href="#hero">Home</a></li>
-    <li><a class="nav-link text-white" href="#portfolio">Portfolio</a></li>
-    <li><a class="nav-link text-white" href="#experience">experience</a></li>
+  <div class="content">
+    <h1>Samir 717 LE</h1>
+    <p>Hello, I am Samir.</p>
+    <p>I'm a 14-year-old passionate web developer from Class 7, working with modern stacks including Node.js, TypeScript, Python, and PHP. I'm deeply into building custom control panels, automation tools, and server hosting setups. I love pushing the limits of Android too — even running VS Code on low-RAM phones!</p>
     
-   <!-- <li title="ARCADE ALLIANCE HOSTING"><a href="#aah" class="nav-link text-white small-text">HOSTING</a>-->
-    </li>
-   </ul>
-  </nav>
-
- </header>
- <div class="spacing">
- </div>
- <div id="hero"></div>
- <section class=" mt-4 ">
-  <div class="container text-white bg-dark rounded-corner">
-   <h3 id="welcome-msg" class="mt-4">WELCOME</h3>
-   <p class="typing" style="width: 70%">To My Personal Webpage</p>
+    <div class="skills">
+      <span class="skill" style="--i:0">HTML/CSS</span>
+      <span class="skill" style="--i:1">JavaScript</span>
+      <span class="skill" style="--i:2">Node.js</span>
+      <span class="skill" style="--i:3">TypeScript</span>
+      <span class="skill" style="--i:4">Python</span>
+      <span class="skill" style="--i:5">PHP</span>
+      <span class="skill" style="--i:6">Server Admin</span>
+      <span class="skill" style="--i:7">Pterodactyl</span>
+      <span class="skill" style="--i:8">Tailwindcss</span>
+      <span class="skill" style="--i:9">Bootstrap</span>
+    </div>
+    
+    <div class="social-links">
+      <a href="https://github.com/samir717le" class="social-link"><i data-feather="github"></i></a>
+      <a href="https://x.com/samir717le" class="social-link"><i data-feather="x"></i></a>
+      <a href="https://instagram.com/samir717le" class="social-link"><i data-feather="instagram"></i></a>
+      <a href="https://www.youtube.com/@samir717le" class="social-link"><i data-feather="youtube"></i></a>
+      <a href="https://tiktok.com/samir717le" class="social-link"><i data-feather="tiktok">TikTok</i></a>
+      <a href="https://freelancer.com/samir717le" class="social-link"><i data-feather="freelancer">Freelancer</i></a>
+    </div>
   </div>
-  <div class="spacing-sm"></div>
-  <div class="container">
-   <h3>About Me</h3>
-   <p>Web developer with expertise in HTML, CSS, JavaScript, and backend technologies like Node.js and PHP. Passionate about building dynamic web apps and exploring server management and automation.</p>
 
-  </div>
-  <div id="experience" class="container">
-   <h3>Experience</h3>
-   <div>
-    <label for="HTML">HTML</label>
-    <input type="range" value="90" disabled>
-   </div>
-   <div>
-    <label for="">CSS</label>
-    <input type="range" value="30" disabled>
-   </div>
-   <div>
-    <label>JS/TS</label>
-    <input type="range" value="90" disabled>
-   </div>
-   <div>
-    <label>PHP</label>
-    <input type="range" value="80" disabled>
-   </div>
-   <div>
-    <label>NODEJS</label>
-    <input type="range" value="20" disabled>
-   </div>
-   <div>
-    <label>REACT</label>
-    <input type="range" value="42" disabled>
-   </div>
-   <div>
-  </div>
- </section>
- <div>
-  <div class="container mt-4 bg-dark ">
-   <h1 class="typing" style="color: white; width: 60%">Portfolio</h1>
-  </div>
-  <section id="portfolio" class="container mt-4 ">
+  <script>
+  feather.replace()
+    const canvas = document.getElementById("bg");
+    const ctx = canvas.getContext("2d");
 
-   <div id="portfolioprojects" class="container-sm mt-8">
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
 
-   </div>
-  </section>
- </div>
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
 
+    const particles = [];
+    const mousePosition = {
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2
+    };
 
- <footer class="blockquote-footer bg-dark in-bottom" id="footer">
-  <div>
-   <a href="mailto:samirthegamer717@gmail.com">📩 </a>
+    // Track mouse position
+    window.addEventListener('mousemove', (event) => {
+      mousePosition.x = event.clientX;
+      mousePosition.y = event.clientY;
+    });
 
+    class Particle {
+      constructor() {
+        this.reset();
+      }
 
-   
-  </div>
-  <p>© 2024 SamiR 717 LE. All rights reserved.</p>
- </footer>
- <script src="/script.js"></script>
- <script>
-  window.addEventListener("load", function() {
-   const loadingScreen = document.getElementById('loading');
-   setTimeout(function() {
-    loadingScreen.style.opacity = 0;
-    loadingScreen.style.display = 'none';
-   }, 500);
-  });
- </script>
- <!-- Brevo Conversations {literal} -->
-<script>
-    (function(d, w, c) {
-        w.BrevoConversationsID = '67542eb6fdd9c9b4df084452';
-        w[c] = w[c] || function() {
-            (w[c].q = w[c].q || []).push(arguments);
-        };
-        var s = d.createElement('script');
-        s.async = true;
-        s.src = 'https://conversations-widget.brevo.com/brevo-conversations.js';
-        if (d.head) d.head.appendChild(s);
-    })(document, window, 'BrevoConversations');
-</script>
-<!-- /Brevo Conversations {/literal} -->
+      reset() {
+        this.x = window.innerWidth / 2 + (Math.random() - 0.5) * 400;
+        this.y = window.innerHeight / 2 + (Math.random() - 0.5) * 400;
+        this.size = Math.random() * 3 + 1;
+        this.alpha = Math.random();
+        this.speed = Math.random() * 0.5 + 0.2;
+        this.directionAngle = Math.random() * Math.PI * 2;
+        this.vx = Math.cos(this.directionAngle) * this.speed;
+        this.vy = Math.sin(this.directionAngle) * this.speed;
+        
+        // Random color from cyberpunk palette
+        const colors = ['#ff0066', '#00ffff', '#9900ff', '#ffff00', '#00ff66'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.fullColor = `hsla(${this.color}, ${this.alpha})`;
+      }
+
+      update() {
+        // Calculate distance to mouse
+        const dx = mousePosition.x - this.x;
+        const dy = mousePosition.y - this.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Apply subtle attraction to mouse
+        if (distance < 200) {
+          const force = 0.02;
+          this.vx += (dx / distance) * force;
+          this.vy += (dy / distance) * force;
+        }
+        
+        // Update position
+        this.x += this.vx;
+        this.y += this.vy;
+        
+        // Apply friction
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+        
+        // Fade out
+        this.alpha -= 0.005;
+        
+        // Reset if faded out or off screen
+        if (this.alpha <= 0 || 
+            this.x < -100 || this.x > window.innerWidth + 100 || 
+            this.y < -100 || this.y > window.innerHeight + 100) {
+          this.reset();
+        }
+      }
+
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color.replace('hsla', 'rgba').replace(')', `, ${this.alpha})`);
+        ctx.fill();
+        
+        // Add glow effect
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = this.color;
+      }
+    }
+
+    for (let i = 0; i < 150; i++) {
+      particles.push(new Particle());
+    }
+
+    function animate() {
+      // Clear with fade effect for trails
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.shadowBlur = 0; // Reset shadow before drawing particles
+      
+      for (const p of particles) {
+        p.update();
+        p.draw();
+      }
+      
+      // Draw connecting lines between nearby particles
+      ctx.lineWidth = 0.5;
+      ctx.strokeStyle = 'rgba(0, 255, 255, 0.05)';
+      
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 100) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
-
 </html>
